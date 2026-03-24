@@ -208,23 +208,28 @@
         const [status,setStatus]=useState("idle");
         const handleSubmit=async(e)=>{
             e.preventDefault(); setStatus("sending");
-            const fd=new FormData(e.target);
+            const formData = {
+                access_key: "c49c3a92-9a06-45d5-8170-4a89c29309bd",
+                subject: "Portfolio Message - bhumik12.github.io/bhumik-portfolio",
+                name: e.target.name.value,
+                email: e.target.email.value,
+                message: e.target.message.value
+            };
             try {
                 const res=await fetch("https://api.web3forms.com/submit",{
                     method:"POST",
-                    body:fd
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(formData)
                 });
                 const json = await res.json();
                 if(json.success){ setStatus("success"); e.target.reset(); }
-                else { setStatus("error"); alert("Form Error: " + (json.message || "Domain blocked or invalid key.")); }
+                else { setStatus("error"); alert("Form Error: " + (json.message || "Submission failed.")); }
             } catch(err){ setStatus("error"); alert("Submission failed. Check network."); }
         };
         const L={idle:"Send Message",sending:"Sending…",success:"Message Sent ✓",error:"Error — Try Again"};
         const B={idle:"#f8fafc",sending:"#64748b",success:"#22c55e",error:"#ef4444"};
         return (
             <form onSubmit={handleSubmit} style={{display:"flex",flexDirection:"column",gap:16,maxWidth:600,margin:"0 auto 48px"}}>
-                <input type="hidden" name="access_key" value="c49c3a92-9a06-45d5-8170-4a89c29309bd"/>
-                <input type="hidden" name="subject" value="Portfolio Message - bhumik12.github.io/bhumik-portfolio"/>
                 <input name="name" type="text" placeholder="Your Name" required style={{padding:18,background:"rgba(255,255,255,.03)",border:"1px solid rgba(255,255,255,.1)",borderRadius:8,color:"#fff",outline:"none",width:"100%",fontSize:15}}/>
                 <input name="email" type="email" placeholder="Your Email" required style={{padding:18,background:"rgba(255,255,255,.03)",border:"1px solid rgba(255,255,255,.1)",borderRadius:8,color:"#fff",outline:"none",width:"100%",fontSize:15}}/>
                 <textarea name="message" rows="5" placeholder="Your Message" required style={{padding:18,background:"rgba(255,255,255,.03)",border:"1px solid rgba(255,255,255,.1)",borderRadius:8,color:"#fff",outline:"none",resize:"none",width:"100%",fontSize:15}}></textarea>
